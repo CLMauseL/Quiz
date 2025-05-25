@@ -4,66 +4,66 @@
   <meta charset="UTF-8">
   <title>CLMauseL Scoreboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbhN3NvHpPDgUOBzBGeu0kzpCzgW8hDSw",
+      authDomain: "olympiade-32eab.firebaseapp.com",
+      databaseURL: "https://olympiade-32eab-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "olympiade-32eab",
+      storageBucket: "olympiade-32eab.firebasestorage.app",
+      messagingSenderId: "624547290234",
+      appId: "1:624547290234:web:3ec5b541ded2402221afc3",
+      measurementId: "G-ZF0Z2TBLFE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const container = document.getElementById("scoreboard");
+
+    function renderScores(data) {
+      container.innerHTML = "";
+      const entries = Object.entries(data || {}).sort((a, b) => b[1] - a[1]);
+      for (const [name, score] of entries) {
+        const div = document.createElement("div");
+        div.className = "team";
+        div.textContent = `${name}: ${score} Punkte`;
+        container.appendChild(div);
+      }
+    }
+
+    onValue(ref(db, "scores"), (snapshot) => {
+      renderScores(snapshot.val());
+    });
+  </script>
+
   <style>
     body {
+      background: black;
+      color: #0ff;
       font-family: 'Orbitron', sans-serif;
-      background: #000010;
-      color: #00f7ff;
       text-align: center;
       padding: 20px;
     }
 
     h1 {
       font-size: 3em;
-      margin-bottom: 30px;
-      text-shadow: 0 0 15px #00f7ff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #0ff;
     }
 
     .team {
       font-size: 2em;
       margin: 10px 0;
       padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      box-shadow: 0 0 10px #00f7ff20;
     }
   </style>
 </head>
 <body>
-
   <h1>🏆 Aktueller Spielstand</h1>
-  <div id="scoreboard"></div>
-
-  <script>
-    const teams = [
-      "BlackScreen",
-      "Alt+F4",
-      "404 Not Found",
-      "500 Internal Game Error",
-      "ragequit"
-    ];
-    let scores = {};
-
-    function renderScores() {
-      const container = document.getElementById("scoreboard");
-      container.innerHTML = '';
-      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      sorted.forEach(([name, points]) => {
-        const div = document.createElement("div");
-        div.className = "team";
-        div.textContent = `${name}: ${points} Punkte`;
-        container.appendChild(div);
-      });
-    }
-
-    const channel = new BroadcastChannel("score_update");
-    channel.onmessage = (event) => {
-      scores = event.data;
-      renderScores();
-    };
-
-    // Falls die Anzeige zuerst geladen wird, Scores initial leer → kein Render
-  </script>
-
+  <div id="scoreboard">Wird geladen...</div>
 </body>
 </html>
