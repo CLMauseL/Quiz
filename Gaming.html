@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaming-Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f0f0f0;
+    }
+    .quiz-container {
+      background: white;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .question {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .answers button {
+      display: block;
+      margin: 0.5rem 0;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      background-color: #eee;
+    }
+    .answers button.correct {
+      background-color: #a6e3a1;
+    }
+    .answers button.wrong {
+      background-color: #f9a3a3;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="question" id="question">Frage wird geladen...</div>
+    <div class="answers" id="answers"></div>
+  </div>
+
+  <script>
+    const quiz = [
+      { frage: "Wie heisst die Welt in Minecraft?", antworten: ["Overland", "Nether", "Overworld", "Dreamland"], korrekt: 2 },
+      { frage: "In welchem Jahr wurde Fortnite veröffentlicht?", antworten: ["2015", "2016", "2017", "2018"], korrekt: 2 },
+      { frage: "Wie heisst der Hauptcharakter in der Halo-Reihe?", antworten: ["Doomguy", "Master Chief", "Commander Shepard", "Agent 47"], korrekt: 1 },
+      { frage: "Was ist kein Pokémon?", antworten: ["Pikachu", "Charmander", "Zelda", "Bulbasaur"], korrekt: 2 },
+      { frage: "Welches dieser Spiele ist ein Battle Royale?", antworten: ["League of Legends", "Fortnite", "The Witcher 3", "Stardew Valley"], korrekt: 1 },
+      { frage: "Welcher Charakter ist in Super Smash Bros. NICHT spielbar?", antworten: ["Mario", "Link", "Shrek", "Pikachu"], korrekt: 2 },
+      { frage: "Wie heisst die Spielreihe mit dem Charakter Kratos?", antworten: ["God of War", "Devil May Cry", "Dark Souls", "Elden Ring"], korrekt: 0 },
+      { frage: "Was ist das Hauptziel in Among Us?", antworten: ["Schätze sammeln", "Imposter entlarven", "Monster töten", "Basen bauen"], korrekt: 1 },
+      { frage: "Welches dieser Spiele ist von FromSoftware?", antworten: ["Sekiro", "Skyrim", "Far Cry", "GTA V"], korrekt: 0 },
+      { frage: "Wie viele Blöcke hoch kann ein normaler Minecraft-Spieler springen?", antworten: ["1", "2", "3", "4"], korrekt: 0 },
+      { frage: "Wie viele Leben hat man in Cuphead standardmäßig?", antworten: ["1", "2", "3", "5"], korrekt: 2 },
+      { frage: "In welchem Spiel spielt man Geralt von Riva?", antworten: ["Dragon Age", "The Witcher", "Dark Souls", "Skyrim"], korrekt: 1 },
+      { frage: "Welche Farbe hat der Panzer von Bowser?", antworten: ["Rot", "Grün", "Blau", "Gelb"], korrekt: 1 },
+      { frage: "Wie viele Starter-Pokémon gibt es pro Generation?", antworten: ["2", "3", "4", "6"], korrekt: 1 },
+      { frage: "Was ist kein echtes Item in Minecraft?", antworten: ["Redstone", "Diamond Hoe", "Energy Potion", "Ender Pearl"], korrekt: 2 },
+      { frage: "Wie viele Sterne kann man in Super Mario 64 sammeln?", antworten: ["70", "100", "120", "150"], korrekt: 2 },
+      { frage: "Welches dieser Spiele gehört zu Valve?", antworten: ["Portal", "Overwatch", "Minecraft", "Tetris"], korrekt: 0 },
+      { frage: "Was ist das Ziel in Tetris?", antworten: ["Farben sortieren", "Steine abbauen", "Reihen vervollständigen", "Bosse besiegen"], korrekt: 2 },
+      { frage: "Wie heisst die Online-Plattform von Valve?", antworten: ["Origin", "Uplay", "Steam", "Epic"], korrekt: 2 },
+      { frage: "Welche dieser Figuren ist aus League of Legends?", antworten: ["Tracer", "Lucio", "Ahri", "Sombra"], korrekt: 2 },
+      { frage: "Was passiert, wenn man in Mario Kart auf eine Bananenschale fährt?", antworten: ["Turbo Boost", "Stopp", "Dreher", "Nichts"], korrekt: 2 },
+      { frage: "Was ist ein Creeper in Minecraft?", antworten: ["Tier", "Gegner", "Werkzeug", "Item"], korrekt: 1 },
+      { frage: "Wie viele Felder misst ein Chunk in Minecraft?", antworten: ["8x8", "12x12", "16x16", "32x32"], korrekt: 2 },
+      { frage: "Wie lautet der Name der Prinzessin in der Mario-Reihe?", antworten: ["Peach", "Daisy", "Zelda", "Rosalina"], korrekt: 0 },
+      { frage: "Wie viele Spieler treten in einem Apex-Squad gegeneinander an?", antworten: ["2", "3", "4", "6"], korrekt: 1 },
+      { frage: "Wie viele Kontinente gibt es in GeoGuessr?", antworten: ["5", "6", "7", "8"], korrekt: 2 },
+      { frage: "Wie heisst das Spiel mit dem rosa Ball namens Kirby?", antworten: ["Kirby's Adventure", "Puffy Quest", "Pink Dream", "Jump World"], korrekt: 0 },
+      { frage: "Welche Spielereihe hat den Untertitel 'Brotherhood'?", antworten: ["Assassin's Creed", "Call of Duty", "Halo", "Uncharted"], korrekt: 0 },
+      { frage: "Wie heisst die virtuelle Stadt in GTA V?", antworten: ["San Andreas", "Vice City", "Los Santos", "Liberty City"], korrekt: 2 },
+      { frage: "Welches dieser Spiele ist ein Lebenssimulationsspiel?", antworten: ["Sims", "Doom", "Cyberpunk", "Half-Life"], korrekt: 0 }
+    ];
+
+    let aktuelleFrage = 0;
+
+    function zeigeFrage() {
+      const frageElement = document.getElementById("question");
+      const antwortContainer = document.getElementById("answers");
+      const aktuelle = quiz[aktuelleFrage];
+
+      frageElement.textContent = `Frage ${aktuelleFrage + 1}/30: ` + aktuelle.frage;
+      antwortContainer.innerHTML = "";
+
+      aktuelle.antworten.forEach((antwort, index) => {
+        const button = document.createElement("button");
+        button.textContent = antwort;
+        button.addEventListener("click", () => pruefeAntwort(index, button));
+        antwortContainer.appendChild(button);
+      });
+    }
+
+    function pruefeAntwort(index, button) {
+      const richtigeAntwort = quiz[aktuelleFrage].korrekt;
+      const buttons = document.querySelectorAll(".answers button");
+
+      buttons.forEach((btn, i) => {
+        if (i === richtigeAntwort) {
+          btn.classList.add("correct");
+        } else if (i === index) {
+          btn.classList.add("wrong");
+        }
+        btn.disabled = true;
+      });
+
+      setTimeout(() => {
+        aktuelleFrage++;
+        if (aktuelleFrage < quiz.length) {
+          zeigeFrage();
+        } else {
+          document.querySelector(".quiz-container").innerHTML = "<h2>Quiz beendet! 🎉<br>Gut gemacht, Gamer! 🕹️</h2>";
+        }
+      }, 1500);
+    }
+
+    zeigeFrage();
+  </script>
+</body>
+</html>
