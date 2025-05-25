@@ -5,7 +5,6 @@
   <title>CLMauseL Olympiade Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <script type="module">
-    // Firebase-Setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
@@ -16,8 +15,7 @@
       projectId: "olympiade-32eab",
       storageBucket: "olympiade-32eab.firebasestorage.app",
       messagingSenderId: "624547290234",
-      appId: "1:624547290234:web:3ec5b541ded2402221afc3",
-      measurementId: "G-ZF0Z2TBLFE"
+      appId: "1:624547290234:web:3ec5b541ded2402221afc3"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -37,7 +35,7 @@
       syncToFirebase();
     };
 
-    window.init = function () {
+    window.onload = function () {
       const tbody = document.getElementById("scoreBody");
       const select = document.getElementById("teamSelect");
       players.forEach(name => {
@@ -52,11 +50,13 @@
           </td>
         `;
         tbody.appendChild(row);
+
         const option = document.createElement("option");
         option.value = name;
         option.textContent = name;
         select.appendChild(option);
       });
+
       const container = document.getElementById("gameButtons");
       for (let i = 1; i <= 15; i++) {
         const btn = document.createElement("button");
@@ -68,10 +68,7 @@
         container.appendChild(btn);
       }
     };
-
-    window.onload = init;
   </script>
-
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
@@ -80,13 +77,11 @@
       text-align: center;
       padding: 20px;
     }
-
     h1 {
       font-size: 3em;
       color: #00f7ff;
       text-shadow: 0 0 10px #00f7ff;
     }
-
     table {
       margin: auto;
       border-collapse: collapse;
@@ -95,13 +90,11 @@
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
     }
-
     th, td {
       border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 15px;
       font-size: 1.2em;
     }
-
     button {
       background: linear-gradient(90deg, #7f00ff, #e100ff);
       border: none;
@@ -112,22 +105,18 @@
       cursor: pointer;
       transition: 0.3s ease;
     }
-
     button:hover {
       transform: scale(1.1);
     }
-
     .game-buttons {
       margin-top: 40px;
     }
-
     .game-buttons button {
       margin: 5px;
       background: #0ff;
       color: #000;
       font-weight: bold;
     }
-
     select {
       font-size: 1em;
       padding: 6px 10px;
