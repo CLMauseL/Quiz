@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>CLMauseL Olympiade Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <script type="module">
+    // Firebase-Setup
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbhN3NvHpPDgUOBzBGeu0kzpCzgW8hDSw",
+      authDomain: "olympiade-32eab.firebaseapp.com",
+      databaseURL: "https://olympiade-32eab-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "olympiade-32eab",
+      storageBucket: "olympiade-32eab.firebasestorage.app",
+      messagingSenderId: "624547290234",
+      appId: "1:624547290234:web:3ec5b541ded2402221afc3",
+      measurementId: "G-ZF0Z2TBLFE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const players = ["BlackScreen", "Alt+F4", "404 Not Found", "500 Internal Game Error", "ragequit"];
+    let scores = {};
+
+    function syncToFirebase() {
+      set(ref(db, "scores"), scores);
+    }
+
+    window.adjustPoints = function (player, value) {
+      scores[player] += value;
+      if (scores[player] < 0) scores[player] = 0;
+      document.getElementById(`score-${player}`).textContent = scores[player];
+      syncToFirebase();
+    };
+
+    window.init = function () {
+      const tbody = document.getElementById("scoreBody");
+      const select = document.getElementById("teamSelect");
+      players.forEach(name => {
+        scores[name] = 0;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${name}</td>
+          <td id="score-${name}">0</td>
+          <td>
+            <button onclick="adjustPoints('${name}', 1)">+1</button>
+            <button onclick="adjustPoints('${name}', -1)">-1</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+      const container = document.getElementById("gameButtons");
+      for (let i = 1; i <= 15; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = `Game ${i}`;
+        btn.onclick = () => {
+          const selected = document.getElementById("teamSelect").value;
+          window.adjustPoints(selected, i);
+        };
+        container.appendChild(btn);
+      }
+    };
+
+    window.onload = init;
+  </script>
+
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: #0e0e20;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #00f7ff;
+      text-shadow: 0 0 10px #00f7ff;
+    }
+
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      margin-top: 30px;
+      width: 80%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      font-size: 1.2em;
+    }
+
+    button {
+      background: linear-gradient(90deg, #7f00ff, #e100ff);
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      margin: 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    .game-buttons {
+      margin-top: 40px;
+    }
+
+    .game-buttons button {
+      margin: 5px;
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    select {
+      font-size: 1em;
+      padding: 6px 10px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>CLMauseL Olympiade – Admin</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>🎮 Team</th>
+        <th>💯 Punkte</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
+    <tbody id="scoreBody"></tbody>
+  </table>
+
+  <label for="teamSelect">Team wählen:</label>
+  <select id="teamSelect"></select>
+
+  <div class="game-buttons" id="gameButtons"></div>
+</body>
+</html>
+
